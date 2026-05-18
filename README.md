@@ -1,4 +1,4 @@
-# OmniQuery - Multi-Domain LLM Agent
+# DataSage - Multi-Domain LLM Agent
 
 ## Problem Statement
 
@@ -6,7 +6,7 @@ Users often need to query across multiple domains (movies, music, books) to get 
 
 ## Solution
 
-OmniQuery is a multi-domain AI agent powered by Google Gemini that understands natural language questions and autonomously decides which databases to query. It bridges structured (PostgreSQL) and unstructured (MongoDB) data across three domains — movies, music, and books — returning combined, context-rich answers.
+DataSage is a multi-domain AI agent powered by Google Gemini that understands natural language questions and autonomously decides which databases to query. It bridges structured (PostgreSQL) and unstructured (MongoDB) data across three domains — movies, music, and books — returning combined, context-rich answers.
 
 ## Tech Stack
 
