@@ -1,4 +1,4 @@
-# 🧠 DataSage — Multi-Domain LLM Agent
+# DataSage — Multi-Domain LLM Agent
 
 > Query movies, music, and books using natural language. DataSage bridges structured (PostgreSQL) and unstructured (MongoDB) data with a Gemini-powered LangChain agent.
 
