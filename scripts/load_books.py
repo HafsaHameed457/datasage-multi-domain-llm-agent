@@ -56,7 +56,7 @@ if reviews_df is not None and not reviews_df.empty:
     domain_ids = books_table['domain_id'].tolist()
     reviews_df['domain_id'] = [str(domain_ids[i % len(domain_ids)]) for i in range(len(reviews_df))]
     for _, row in reviews_df.iterrows():
-        review_text = row.get('review_text') or row.get('reviewText', '')
+        review_text = row.get('review_text') or row.get('reviewText') or row.get('description', '')
         if review_text:
             docs.append({
                 'domain_id': str(row['domain_id']),

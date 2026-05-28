@@ -4,5 +4,6 @@ __pycache__/
 .env
 databases/
 data/raw/
+plan.md
 node_modules/
 
