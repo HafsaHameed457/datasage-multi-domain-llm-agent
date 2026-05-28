@@ -69,15 +69,62 @@ Users want cross-domain answers like *"Find an energetic track with good danceab
 
 ## Setup
 
+### Prerequisites
+- Python 3.11+, Docker, Git
+- [Google AI Studio API key](https://aistudio.google.com/) (free)
+
+### 1. Start Databases
+
 ```bash
-# 1. Start databases (Docker)
-docker compose up -d
+# PostgreSQL
+docker run --name pg-datasage \
+  -e POSTGRES_USER=admin \
+  -e POSTGRES_PASSWORD=secret \
+  -e POSTGRES_DB=datasage \
+  -p 5432:5432 \
+  -d postgres:16
 
-# 2. Load data
-python etl/load_all.py
+# Create schemas
+docker exec pg-datasage psql -U admin -d datasage -c "CREATE SCHEMA IF NOT EXISTS movies;"
+docker exec pg-datasage psql -U admin -d datasage -c "CREATE SCHEMA IF NOT EXISTS music;"
+docker exec pg-datasage psql -U admin -d datasage -c "CREATE SCHEMA IF NOT EXISTS books;"
 
-# 3. Start the API
+# MongoDB
+docker run --name mongo-datasage \
+  -e MONGO_INITDB_ROOT_USERNAME=admin \
+  -e MONGO_INITDB_ROOT_PASSWORD=secret \
+  -p 27017:27017 \
+  -d mongo:7
+```
+
+### 2. Load Data
+
+```bash
+# Ensure datasets are in data/raw/ then run:
+source venv/bin/activate
+python scripts/load_movies.py
+python scripts/load_music.py
+python scripts/load_books.py
+```
+
+### 3. Start the API
+
+```bash
 uvicorn app.main:app --reload
 ```
 
-See the project plan for detailed instructions.
+### 4. (Optional) Streamlit Frontend
+
+```bash
+streamlit run frontend.py
+```
+
+---
+
+## Data Status
+
+| Domain | PostgreSQL | MongoDB |
+|--------|-----------|---------|
+| 🎬 Movies | 4,803 movies | 50,000 reviews |
+| 🎵 Music | 114,000 tracks | 1,000 lyrics |
+| 📚 Books | 11,119 books | 19,996 reviews |
