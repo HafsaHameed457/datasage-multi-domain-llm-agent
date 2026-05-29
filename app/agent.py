@@ -1,13 +1,12 @@
 from langchain.agents import create_agent
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 
 from app.config import Config
 from app.tools.sql_tools import create_sql_tool
 from app.tools.mongo_tools import create_mongo_tool
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
-    google_api_key=Config.GOOGLE_API_KEY,
+llm = ChatGroq(
+    model="llama-3.3-70b-versatile",
     temperature=0,
 )
 
