@@ -1,39 +1,32 @@
-import json
-
-from langchain_core.tools import Tool
+from langchain_core.tools import StructuredTool
 from pymongo import MongoClient
 
 from app.config import Config
 
 
-def create_mongo_tool(domain: str, db_name: str, collection_name: str) -> Tool:
-    def _search(query_json: str) -> str:
+def create_mongo_tool(domain: str, db_name: str, collection_name: str) -> StructuredTool:
+    def _search(domain_id: str = None, text_search: str = None) -> str:
         client = MongoClient(Config.MONGO_URI)
         coll = client[db_name][collection_name]
-        try:
-            filters = json.loads(query_json)
-        except json.JSONDecodeError:
-            return "Invalid JSON. Use {'domain_id': 123} or {'text_search': 'keyword'}."
-        if "domain_id" in filters:
-            docs = list(coll.find({"domain_id": str(filters["domain_id"])}).limit(5))
-        elif "text_search" in filters:
-            regex = filters["text_search"]
-            docs = list(coll.find({"text": {"$regex": regex, "$options": "i"}}).limit(5))
+        if domain_id:
+            docs = list(coll.find({"domain_id": domain_id}).limit(5))
+        elif text_search:
+            docs = list(
+                coll.find({"text": {"$regex": text_search, "$options": "i"}}).limit(5)
+            )
         else:
-            return "Unsupported query. Use 'domain_id' or 'text_search'."
+            return "Provide domain_id or text_search."
         results = [
-            {"text": d.get("text", "")[:500], "sentiment": d.get("sentiment")}
+            f"text: {d.get('text', '')[:500]}\nsentiment: {d.get('sentiment')}"
             for d in docs
         ]
-        return json.dumps(results, ensure_ascii=False)
+        return "\n---\n".join(results) if results else "No results found."
 
-    return Tool(
+    return StructuredTool.from_function(
+        func=_search,
         name=f"mongo_{domain}",
         description=(
-            f"Search {domain} text data in MongoDB. "
-            f"Input a JSON string: "
-            f"{{'domain_id': 123}} to fetch documents by ID, "
-            f"or {{'text_search': 'keyword'}} to search inside text fields."
+            f"Search {domain} text data (reviews/lyrics) in MongoDB. "
+            f"Use 'domain_id' to look up by ID, or 'text_search' for keyword search."
         ),
-        func=_search,
     )

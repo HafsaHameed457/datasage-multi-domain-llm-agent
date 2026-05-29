@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain_groq import ChatGroq
 
 from app.config import Config
-from app.tools.sql_tools import create_sql_tools
+from app.tools.sql_tools import create_sql_tool
 from app.tools.mongo_tools import create_mongo_tool
 
 llm = ChatGroq(
@@ -18,17 +18,20 @@ DOMAINS = [
 
 tools = []
 for d in DOMAINS:
-    sql_tools = create_sql_tools(d["domain"], Config.PG_URI, d["schema"], llm)
-    mongo_tool = create_mongo_tool(d["domain"], d["mongo_db"], d["mongo_coll"])
-    tools.extend([*sql_tools, mongo_tool])
+    tools.append(create_sql_tool(d["domain"], Config.PG_URI, d["schema"], llm))
+    tools.append(create_mongo_tool(d["domain"], d["mongo_db"], d["mongo_coll"]))
 
 agent = create_agent(
     model=llm,
     tools=tools,
     system_prompt=(
-        "You are DataSage, a multi-domain assistant for movies, music, and books. "
-        "Use SQL tools for structured data and MongoDB tools for text content. "
-        "Choose the right tools based on the question."
+        "You are DataSage, a multi-domain assistant for movies, music, and books.\n"
+        "SQL tools query structured tables:\n"
+        "- movies: movies(domain_id,title,release_date,budget,revenue,vote_average,popularity), genres(id,name), movie_genres(domain_id,genre_id)\n"
+        "- music: tracks(domain_id,name,artists,popularity,danceability,energy,valence,tempo,track_genre)\n"
+        "- books: books(domain_id,title,authors,average_rating,ratings_count)\n"
+        "MongoDB tools search text content (reviews, lyrics, descriptions).\n"
+        "Use the right tool for the question."
     ),
 )
 
