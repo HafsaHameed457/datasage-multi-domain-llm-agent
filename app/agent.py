@@ -2,7 +2,7 @@ from langchain.agents import create_agent
 from langchain_groq import ChatGroq
 
 from app.config import Config
-from app.tools.sql_tools import create_sql_tool
+from app.tools.sql_tools import create_sql_tools
 from app.tools.mongo_tools import create_mongo_tool
 
 llm = ChatGroq(
@@ -18,19 +18,17 @@ DOMAINS = [
 
 tools = []
 for d in DOMAINS:
-    sql_tool = create_sql_tool(d["domain"], Config.PG_URI, d["schema"], llm)
+    sql_tools = create_sql_tools(d["domain"], Config.PG_URI, d["schema"], llm)
     mongo_tool = create_mongo_tool(d["domain"], d["mongo_db"], d["mongo_coll"])
-    tools.extend([sql_tool, mongo_tool])
+    tools.extend([*sql_tools, mongo_tool])
 
 agent = create_agent(
     model=llm,
     tools=tools,
     system_prompt=(
-        "You are DataSage, a multi-domain assistant. "
-        "You have access to SQL databases and MongoDB text collections "
-        "for movies, music, and books. "
-        "Use the appropriate tools to answer the user's question. "
-        "Combine structured data and text snippets when helpful."
+        "You are DataSage, a multi-domain assistant for movies, music, and books. "
+        "Use SQL tools for structured data and MongoDB tools for text content. "
+        "Choose the right tools based on the question."
     ),
 )
 
