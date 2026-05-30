@@ -1,6 +1,6 @@
 # DataSage — Multi-Domain LLM Agent
 
-> Query movies, music, and books using natural language. DataSage bridges structured (PostgreSQL) and unstructured (MongoDB) data with a Gemini-powered LangChain agent.
+> Query movies, music, and books using natural language. DataSage bridges structured (PostgreSQL) and unstructured (MongoDB) data with a Groq-powered LangChain agent.
 
 ---
 
@@ -13,7 +13,7 @@ User Query (plain English)
     FastAPI (/query)
         │
         ▼
-    LangChain Agent (Gemini)
+    LangChain Agent (Groq)
         │
    ┌────┼──────────────────────────┐
    ▼    ▼                          ▼
@@ -39,7 +39,7 @@ Users want cross-domain answers like *"Find an energetic track with good danceab
 
 | Layer             | Technology                          |
 |-------------------|-------------------------------------|
-| 🧠 LLM            | Google Gemini 1.5 Flash             |
+| 🧠 LLM            | Groq (llama-3.3-70b-versatile)      |
 | ⚙️ Framework      | LangChain + FastAPI                 |
 | 🗃️ Structured DB  | PostgreSQL (3 schemas)              |
 | 📄 Unstructured DB| MongoDB (3 collections)             |
@@ -53,8 +53,8 @@ Users want cross-domain answers like *"Find an energetic track with good danceab
 | Step | Description |
 |------|-------------|
 | **1. Data** | Movie, music, and book datasets are loaded into PostgreSQL (ratings, genres, popularity) and MongoDB (reviews, lyrics). |
-| **2. Agent** | LangChain builds an OpenAI-style tools agent backed by Gemini with **6 tools** — one SQL + one Mongo tool per domain. |
-| **3. Query** | User asks a question → FastAPI receives it → Agent picks relevant tools → Gathers structured + unstructured data → Gemini synthesizes the answer. |
+| **2. Agent** | LangChain builds an OpenAI-style tools agent backed by Groq (LLaMA 3.3 70B) with **6 tools** — one SQL + one Mongo tool per domain. |
+| **3. Query** | User asks a question → FastAPI receives it → Agent picks relevant tools → Gathers structured + unstructured data → LLM synthesizes the answer. |
 | **4. Example** | *"Highest rated sci-fi movie? Show a review."* → `sql_movies` finds the movie → `mongo_movies` fetches a review → combined response. |
 
 ### Domain → Tool Mapping
@@ -71,7 +71,7 @@ Users want cross-domain answers like *"Find an energetic track with good danceab
 
 ### Prerequisites
 - Python 3.11+, Docker, Git
-- [Google AI Studio API key](https://aistudio.google.com/) (free)
+- [Groq API key](https://console.groq.com/keys) (free, no credit card)
 
 ### 1. Start Databases
 
@@ -97,7 +97,19 @@ docker run --name mongo-datasage \
   -d mongo:7
 ```
 
-### 2. Load Data
+### 2. Configure API Key
+
+Create `.env` in the project root:
+
+```ini
+PG_URI=postgresql://admin:secret@localhost:5432/datasage
+MONGO_URI=mongodb://admin:secret@localhost:27017/
+GROQ_API_KEY=gsk_your_key_here
+```
+
+Get a free key at [console.groq.com/keys](https://console.groq.com/keys).
+
+### 3. Load Data
 
 ```bash
 # Ensure datasets are in data/raw/ then run:
@@ -107,13 +119,13 @@ python scripts/load_music.py
 python scripts/load_books.py
 ```
 
-### 3. Start the API
+### 4. Start the API
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-### 4. (Optional) Streamlit Frontend
+### 5. (Optional) Streamlit Frontend
 
 ```bash
 streamlit run frontend.py

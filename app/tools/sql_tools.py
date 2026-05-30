@@ -17,8 +17,4 @@ def create_sql_tool(domain: str, pg_uri: str, schema: str, llm) -> Tool:
     toolkit = SQLDatabaseToolkit(db=db, llm=llm)
     query_tool = next(t for t in toolkit.get_tools() if t.name == "sql_db_query")
     query_tool.name = f"sql_{domain}"
-    query_tool.description = (
-        f"Access the {domain} database (schema: {schema}). "
-        f"Use SQL to retrieve structured data about {domain}."
-    )
     return query_tool
