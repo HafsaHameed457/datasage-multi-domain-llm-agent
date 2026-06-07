@@ -13,8 +13,9 @@ def create_sql_tool(domain: str, pg_uri: str, schema: str, llm) -> Tool:
         cursor.execute(f"SET search_path TO {schema}")
         cursor.close()
 
-    db = SQLDatabase(engine, schema=schema, sample_rows_in_table_info=3)
+    db = SQLDatabase(engine, schema=schema, sample_rows_in_table_info=0)
     toolkit = SQLDatabaseToolkit(db=db, llm=llm)
     query_tool = next(t for t in toolkit.get_tools() if t.name == "sql_db_query")
     query_tool.name = f"sql_{domain}"
+    query_tool.description = f"Run SQL queries on the {domain} database. Tables available via sql_db_list_tables."
     return query_tool

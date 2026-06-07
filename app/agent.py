@@ -1,4 +1,6 @@
-from groq import BadRequestError
+import asyncio
+
+from groq import APIStatusError, BadRequestError
 from langchain.agents import create_agent
 from langchain_groq import ChatGroq
 
@@ -62,7 +64,7 @@ async def _summarize(conversation: list[list[str]], existing: str = "") -> str:
 async def run_agent(
     question: str, history: list[list[str]] | None = None, summary: str = ""
 ) -> tuple[str, str]:
-    for attempt in range(2):
+    for attempt in range(3):
         try:
             msgs = []
             if history:
@@ -80,7 +82,8 @@ async def run_agent(
             msgs.append(("human", question))
             result = await agent.ainvoke({"messages": msgs})
             return result["messages"][-1].content, summary
-        except BadRequestError:
-            if attempt == 0:
+        except (BadRequestError, APIStatusError):
+            if attempt < 2:
+                await asyncio.sleep(2 ** attempt)
                 continue
             raise
