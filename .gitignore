@@ -5,5 +5,6 @@ __pycache__/
 databases/
 data/raw/
 plan.md
+details.md
 node_modules/
 
