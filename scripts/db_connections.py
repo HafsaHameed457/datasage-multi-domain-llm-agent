@@ -11,6 +11,7 @@ PG_HOST = os.getenv("PG_HOST")
 PG_PORT = os.getenv("PG_PORT")
 PG_DB = os.getenv("PG_DB")
 MONGO_URI = os.getenv("MONGO_URI")
+PG_URI=os.getenv("PG_URI")
 
 pg_engine = create_engine(
     f"postgresql+psycopg2://{PG_USER}:{PG_PASSWORD}@{PG_HOST}:{PG_PORT}/{PG_DB}"

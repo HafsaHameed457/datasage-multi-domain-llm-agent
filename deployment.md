@@ -46,9 +46,25 @@ git push -u origin main
 ### 4. Render — Backend
 
 1. Log in at [render.com](https://render.com) via GitHub.
-2. Click **New +** → **Blueprint** → select your repo → **Apply**.
-3. Render reads `render.yaml` and creates the service.
-4. Add `PG_URI`, `MONGO_URI`, and `GROQ_API_KEY` as environment secrets in the Render dashboard.
+2. From dashboard, click **New +** → **Web Service**.
+3. Connect your GitHub repo (`datasage`).
+4. Set the following:
+
+   | Field | Value |
+   |-------|-------|
+   | **Name** | `datasage-api` |
+   | **Runtime** | `Docker` |
+   | **Branch** | `main` |
+   | **Health Check Path** | `/health` |
+
+5. Click **Create Web Service**. Render builds the Docker image and deploys.
+6. Go to **Environment** tab and add:
+
+   - `PG_URI` → your Neon connection string
+   - `MONGO_URI` → your Atlas connection string
+   - `GROQ_API_KEY` → your Groq key
+
+7. Click **Save Changes** → **Manual Deploy** → **Deploy latest commit**.
 
 ### 5. Streamlit Cloud — Frontend
 
