@@ -2,6 +2,8 @@
 
 > Query movies, music, and books using natural language. DataSage bridges structured (PostgreSQL) and unstructured (MongoDB) data with a Groq-powered LangChain agent.
 
+🧠 **Live Demo:** [datasage-multi-domain-llm-agent-nsgu429j6jage2dh4exufj.streamlit.app](https://datasage-multi-domain-llm-agent-nsgu429j6jage2dh4exufj.streamlit.app/)
+
 ---
 
 ## Architecture
@@ -140,3 +142,37 @@ streamlit run frontend.py
 | 🎬 Movies | 4,803 movies | 50,000 reviews |
 | 🎵 Music | 114,000 tracks | 1,000 lyrics |
 | 📚 Books | 11,119 books | 19,996 reviews |
+
+---
+
+## Deployment
+
+| Service | Platform | Tech |
+|---------|----------|------|
+| **Backend API** | [Render](https://render.com) | Docker 🐳 |
+| **Frontend** | [Streamlit Community Cloud](https://streamlit.io/cloud) | Python |
+| **PostgreSQL** | [Neon.tech](https://neon.tech) | Serverless Postgres |
+| **MongoDB** | [MongoDB Atlas](https://mongodb.com/atlas) | M0 free cluster |
+| **CI/CD** | [GitHub Actions](.github/workflows/ci.yml) | Ruff lint on push/PR |
+
+### Docker
+
+The backend runs as a Docker container built from [`Dockerfile`](Dockerfile) (multi-stage, `python:3.12-slim`). Render builds and deploys the image automatically on every push to `main`.
+
+```bash
+# Build locally
+docker build -t datasage-api .
+docker run -p 8000:8000 --env-file .env datasage-api
+```
+
+### CI/CD
+
+Every push and pull request triggers a **GitHub Actions** workflow (`.github/workflows/ci.yml`) that runs `ruff check .` to enforce code quality. On `main`, Render auto-deploys the new Docker image.
+
+### Production URLs
+
+| Service | URL |
+|---------|-----|
+| Frontend | https://datasage-multi-domain-llm-agent-nsgu429j6jage2dh4exufj.streamlit.app/ |
+| Backend | https://datasage-api.onrender.com |
+| Health | https://datasage-api.onrender.com/health |
