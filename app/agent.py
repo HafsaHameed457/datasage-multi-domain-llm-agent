@@ -1,3 +1,4 @@
+from groq import BadRequestError
 from langchain.agents import create_agent
 from langchain_groq import ChatGroq
 
@@ -37,5 +38,11 @@ agent = create_agent(
 
 
 async def run_agent(question: str) -> str:
-    result = await agent.ainvoke({"messages": [("human", question)]})
-    return result["messages"][-1].content
+    for attempt in range(2):
+        try:
+            result = await agent.ainvoke({"messages": [("human", question)]})
+            return result["messages"][-1].content
+        except BadRequestError:
+            if attempt == 0:
+                continue
+            raise
