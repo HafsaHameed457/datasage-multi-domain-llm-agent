@@ -14,6 +14,8 @@ st.markdown("Ask about movies, music, or books in natural language.")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
+if "summary" not in st.session_state:
+    st.session_state.summary = ""
 
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
@@ -27,9 +29,19 @@ if prompt := st.chat_input("Ask a question..."):
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             try:
-                resp = httpx.post(API_URL, json={"question": prompt}, timeout=60)
+                body = {
+                    "question": prompt,
+                    "summary": st.session_state.summary,
+                    "history": [
+                        [m["role"], m["content"]]
+                        for m in st.session_state.messages[:-1]
+                    ],
+                }
+                resp = httpx.post(API_URL, json=body, timeout=60)
                 resp.raise_for_status()
-                answer = resp.json()["answer"]
+                data = resp.json()
+                answer = data["answer"]
+                st.session_state.summary = data.get("summary", "")
             except Exception as e:
                 answer = f"Error: {e}"
         st.markdown(answer)

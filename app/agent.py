@@ -36,12 +36,50 @@ agent = create_agent(
     ),
 )
 
+ROLE_MAP = {"user": "human", "assistant": "ai", "human": "human", "ai": "ai"}
+SUMMARY_TRIGGER = 20
+KEEP = 10
 
-async def run_agent(question: str) -> str:
+
+async def _summarize(conversation: list[list[str]], existing: str = "") -> str:
+    lines = [f"{role}: {text}" for role, text in conversation]
+    text = "\n".join(lines)
+
+    prompt = (
+        "Summarize the key facts from this conversation in one short sentence. "
+        "Focus on movies, music, books, ratings, genres, and recommendations discussed.\n\n"
+    )
+    if existing:
+        prompt += f"Previous summary: {existing}\n\n"
+    prompt += f"New conversation:\n{text}\n\nSummary:"
+    try:
+        response = await llm.ainvoke([("human", prompt)])
+        return response.content.strip()
+    except Exception:
+        return existing
+
+
+async def run_agent(
+    question: str, history: list[list[str]] | None = None, summary: str = ""
+) -> tuple[str, str]:
     for attempt in range(2):
         try:
-            result = await agent.ainvoke({"messages": [("human", question)]})
-            return result["messages"][-1].content
+            msgs = []
+            if history:
+                total = len(history)
+                if total > SUMMARY_TRIGGER:
+                    old = history[:-(KEEP)]
+                    recent = history[-(KEEP):]
+                    summary = await _summarize(old, summary)
+                    msgs.append(("system", f"Conversation summary: {summary}"))
+                    for role, text in recent:
+                        msgs.append((ROLE_MAP.get(role, "human"), text))
+                else:
+                    for role, text in history:
+                        msgs.append((ROLE_MAP.get(role, "human"), text))
+            msgs.append(("human", question))
+            result = await agent.ainvoke({"messages": msgs})
+            return result["messages"][-1].content, summary
         except BadRequestError:
             if attempt == 0:
                 continue
