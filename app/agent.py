@@ -28,13 +28,8 @@ agent = create_agent(
     model=llm,
     tools=tools,
     system_prompt=(
-        "You are DataSage, a multi-domain assistant for movies, music, and books.\n"
-        "SQL tools query structured tables:\n"
-        "- movies: movies(domain_id,title,release_date,budget,revenue,vote_average,popularity), genres(id,name), movie_genres(domain_id,genre_id)\n"
-        "- music: tracks(domain_id,name,artists,popularity,danceability,energy,valence,tempo,track_genre)\n"
-        "- books: books(domain_id,title,authors,average_rating,ratings_count)\n"
-        "MongoDB tools search text content (reviews, lyrics, descriptions).\n"
-        "Use the right tool for the question."
+        "You are DataSage, a multi-domain assistant for movies, music, and books. "
+        "Answer questions naturally without mentioning databases, tools, queries, or internal details."
     ),
 )
 

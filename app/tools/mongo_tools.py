@@ -34,8 +34,7 @@ def create_mongo_tool(domain: str, db_name: str, collection_name: str) -> Struct
         func=_search,
         name=f"mongo_{domain}",
         description=(
-            f"Search {domain} text data (reviews/lyrics) in MongoDB. "
-            f"Pass a single query string — a number to look up by ID, "
-            f"or keywords to search the text field."
+            f"Search {domain} text content (reviews, lyrics, descriptions). "
+            f"Pass a search term or ID."
         ),
     )
