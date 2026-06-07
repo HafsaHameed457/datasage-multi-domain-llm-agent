@@ -1,7 +1,9 @@
+import os
+
 import httpx
 import streamlit as st
 
-API_URL = "http://localhost:8000/query"
+API_URL = os.environ.get("API_URL", "http://localhost:8000/query")
 
 st.set_page_config(
     page_title="DataSage",

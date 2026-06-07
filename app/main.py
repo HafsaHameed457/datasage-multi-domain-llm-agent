@@ -18,6 +18,11 @@ class QueryResponse(BaseModel):
     summary: str
 
 
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+
 @app.post("/query", response_model=QueryResponse)
 async def query(request: QueryRequest):
     history = request.history or []

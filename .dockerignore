@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+.data/
+data/
+.env
+.git/
+.gitignore
+README.md
+plan.md
+setup.md
+details.md
+*.log
