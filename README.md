@@ -2,7 +2,9 @@
 
 > Query movies, music, and books using natural language. DataSage bridges structured (PostgreSQL) and unstructured (MongoDB) data with a Groq-powered LangChain agent.
 
- **Live Demo:** [datasage-multi-domain-llm-agent-nsgu429j6jage2dh4exufj.streamlit.app](https://datasage-multi-domain-llm-agent-nsgu429j6jage2dh4exufj.streamlit.app/)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+
+🧠 **Live Demo:** [datasage-multi-domain-llm-agent-nsgu429j6jage2dh4exufj.streamlit.app](https://datasage-multi-domain-llm-agent-nsgu429j6jage2dh4exufj.streamlit.app/)
 
 ---
 
@@ -33,8 +35,7 @@ User Query (plain English)
 
 ## Problem
 
-Users want cross-domain answers like *"Find an energetic track with good danceability and show its lyrics"* or *"What's a highly rated sci-fi movie with positive reviews?"* Traditional setups make you stitch together structured DB queries and unstructured text searches manually?
-DataSage does it in one shot.
+Users want cross-domain answers like *"Find an energetic track with good danceability and show its lyrics"* or *"What's a highly rated sci-fi movie with positive reviews?"* Traditional setups make you stitch together structured DB queries and unstructured text searches manually — DataSage does it in one shot.
 
 ---
 
@@ -177,3 +178,9 @@ Every push and pull request triggers a **GitHub Actions** workflow (`.github/wor
 | Frontend | https://datasage-multi-domain-llm-agent-nsgu429j6jage2dh4exufj.streamlit.app/ |
 | Backend | https://datasage-api.onrender.com |
 | Health | https://datasage-api.onrender.com/health |
+
+---
+
+## License
+
+Copyright 2026 Hafsa. Licensed under the [Apache License, Version 2.0](LICENSE).
